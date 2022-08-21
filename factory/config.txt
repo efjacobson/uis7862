@@ -1,0 +1,18 @@
+#test
+ro.sf.swrotation=90
+qemu.hw.mainkeys=0
+sys.lsec.navi_bar_height=144
+
+ro.build.fytisbootopen=1
+
+sys.fyt.bluetooth_type=1
+# ≈‰÷√¿∂—¿¿‡–Õ
+# 0£∫ƒ⁄÷√¿∂—¿£ª
+# 1£∫RDA£ª
+# 2£∫IVT£ª
+# 3£∫WQRDA£ª
+# 4: WQBC5
+
+sys.fyt.ec_version=6
+ro.fyt.splitscreen=0
+persist.fyt.zh_frontview_enable=false
