@@ -1,1 +1,5 @@
+test
+dellapp
+twipe_sd
+twipe_data
 twipe_all

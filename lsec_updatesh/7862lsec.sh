@@ -1,34 +1,38 @@
 #!/system/bin/sh
 
-rm -rf /storage/sdcard1/flashreport
-mkdir -p /storage/sdcard1/flashreport
+find / -name "*FLASH_WITH_THIS_ONE*" >./usbdir.txt
+sed -i 's|/FLASH_WITH_THIS_ONE||' ./usbdir.txt
+rm "$(cat ./usbdir.txt)/FLASH_WITH_THIS_ONE"
 
-ls -lR /data/ >/storage/sdcard1/flashreport/data_listing.txt
-ls -lR /dev/ >/storage/sdcard1/flashreport/dev_listing.txt
-ls -lR /system/ >/storage/sdcard1/flashreport/system_listing.txt
-ls -lR /sys/ >/storage/sdcard1/flashreport/sys_listing.txt
-ls -lR /oem/ >/storage/sdcard1/flashreport/oem_listing.txt
-ls -lR /vendor/ >/storage/sdcard1/flashreport/vendor_listing.txt
-ls -lR /sbin/ >/storage/sdcard1/flashreport/sbin_listing.txt
+date +%s >./resultsfolder.txt
+echo "$(cat ./usbdir.txt)/$(cat ./resultsfolder.txt)" >./resultsdir.txt
+mkdir -p "$(cat ./resultsdir.txt)"
 
-# rm -rf /oem/app/190000000_com.android.calculator2
-# pm install /storage/sdcard1/flashfiles/totalcommander.apk
+###REPLACE_TOKEN###
 
-find / -name "*calculator*" >/storage/sdcard1/flashreport/find1.txt
-find /data/ -name "*calculator*" >/storage/sdcard1/flashreport/find2.txt
+ls -laR /data/ >"$(cat ./resultsdir.txt)/data_listing.txt"
+ls -laR /dev/ >"$(cat ./resultsdir.txt)/dev_listing.txt"
+ls -laR /system/ >"$(cat ./resultsdir.txt)/system_listing.txt"
+ls -laR /sys/ >"$(cat ./resultsdir.txt)/sys_listing.txt"
+ls -laR /oem/ >"$(cat ./resultsdir.txt)/oem_listing.txt"
+ls -laR /vendor/ >"$(cat ./resultsdir.txt)/vendor_listing.txt"
+ls -laR /sbin/ >"$(cat ./resultsdir.txt)/sbin_listing.txt"
+ls -laR /storage/ >"$(cat ./resultsdir.txt)/storage_listing.txt"
+ls -laR /cache/ >"$(cat ./resultsdir.txt)/cache_listing.txt"
 
-echo "$PATH" >/storage/sdcard1/flashreport/path.txt
+find / -type d -name "*190000000_com.android.calculator2" -exec rm -rf {} \;
 
-mount -o remount,rw /data
-ls -lR /data/ >/storage/sdcard1/flashreport/data_listing2.txt
-find /data/ -name "*calculator*" >/storage/sdcard1/flashreport/find3.txt
+echo "$PATH" >"$(cat ./resultsdir.txt)/path.txt"
+pwd >"$(cat ./resultsdir.txt)/pwd.txt"
 
-# /oem/app/190000000_com.android.calculator2
-# /oem/app/190000000_com.android.calculator2/190000000_com.android.calculator2.apk
-# /storage/sdcard1/SPELUNK/find_calculator.txt
+mkdir -p "$(cat ./resultsdir.txt)/flasher"
+mv "$(cat ./usbdir.txt)/AllAppUpdate.bin" "$(cat ./resultsdir.txt)/flasher/"
+mv "$(cat ./usbdir.txt)/config.txt" "$(cat ./resultsdir.txt)/flasher/"
+mv "$(cat ./usbdir.txt)/lsec6315update" "$(cat ./resultsdir.txt)/flasher/"
+mv "$(cat ./usbdir.txt)/updatecfg.txt" "$(cat ./resultsdir.txt)/flasher/"
+mv "$(cat ./usbdir.txt)/lsec_updatesh" "$(cat ./resultsdir.txt)/flasher/"
+mv "$(cat ./usbdir.txt)/oem_vital-app" "$(cat ./resultsdir.txt)/flasher/"
 
-# FYT apps
-# rm -rf /oem/app/190000000_com.android.calculator2
-# rm -f /data/dalvik-cache/x86_64/oem@app@190000000_com.android.calculator2*
-# rm -rf /data/data/com.android.calculator2
-# rm -rf /data/system/package_cache/1/190000000_com.android.calculator2*
+rm ./resultsfolder.txt
+rm ./resultsdir.txt
+rm ./usbdir.txt

@@ -1,32 +1,71 @@
 #!/bin/bash
 
-rm -rf flasher && mkdir flasher
+dir=
 
-cp ./factory/AllAppUpdate.bin ./flasher/AllAppUpdate.bin
-mv ./vital-app ./flasher/
-cd ./flasher || exit
-# 7z a AllAppUpdate.bin ./vital-app
-7z a -r -tzip -mx=0 -p048a02243bb74474b25233bda3cd02f8 ./AllAppUpdate.bin ./vital-app
-mv ./vital-app ../
-cd ..
-cp -r ./lsec_updatesh ./flasher/
-cp ./factory/config.txt ./flasher/config.txt
-cp ./factory/updatecfg.txt ./flasher/updatecfg.txt
-cp ./factory/lsec6315update ./flasher/lsec6315update
+for opt in "$@"; do
+  case ${opt} in
+  --output-directory=*)
+    dir=${opt#*=}
+    ;;
+  --help)
+    display_help
+    exit
+    ;;
+  *)
+    display_help
+    exit
+    ;;
+  esac
+done
 
-# unzip -P 048a02243bb74474b25233bda3cd02f8 -d AllAppUpdate AllAppUpdate.zip
-# rm ./AllAppUpdate.zip
+display_help() {
+  echo "
+Available options:
+  --output-directory path of output directory
+"
+}
 
-# while read -r app; do
-#   cp "./add/$app.apk" "./AllAppUpdate/$app.apk"
-# done < <(jq -r '.add[]' ./flashconfig.json)
+main() {
+  rm -rf ./flasher && mkdir ./flasher
 
-# cd ./add || exit
-# for app in *; do
-#   cp "./$app" "../AllAppUpdate/vital-app/$app"
-# done
+  cp ./factory/AllAppUpdate.bin ./flasher/AllAppUpdate.bin
+  mv ./AllAppUpdate_vital-app ./flasher/vital-app
+  cd ./flasher || exit
+  7z a -r -tzip -mx=0 -p048a02243bb74474b25233bda3cd02f8 ./AllAppUpdate.bin ./vital-app
+  7z d -r ./AllAppUpdate.bin app/190000004_com.syu.gallery
+  mv ./vital-app ../AllAppUpdate_vital-app
+  cd ..
+  cp -r ./lsec_updatesh ./flasher/
+  cp ./factory/config.txt ./flasher/config.txt
+  cp ./factory/updatecfg.txt ./flasher/updatecfg.txt
+  cp ./factory/lsec6315update ./flasher/lsec6315update
+  cp -r ./oem_vital-app ./flasher/
+  touch ./flasher/FLASH_WITH_THIS_ONE
 
-# /storage/sdcard1/7zzs a -r -tzip -mx=0 -p048a02243bb74474b25233bda3cd02f8 /storage/sdcard1/BACKUP/AllAppUpdate.bin /oem/app /oem/vital-app /oem/priv-app /oem/res /oem/Ver
-# /usr/bin/7z
+  for app in ./flasher/oem_vital-app/*; do
+    baseapp="$(basename "$app")"
+    # shellcheck disable=SC2016
+    subcmd='$(cat ./usbdir.txt)'
+    cmd="cp \"$subcmd/oem_vital-app/$baseapp\" /oem/vital-app/"
+    sed -i "s|###REPLACE_TOKEN###|$cmd\n###REPLACE_TOKEN###|" ./flasher/lsec_updatesh/7862lsec.sh
+  done
 
-# jq -cr '.add[]' flashconfig.json
+  cmd='chmod 644 /oem/vital-app/*'
+  sed -i "s|###REPLACE_TOKEN###|$cmd|" ./flasher/lsec_updatesh/7862lsec.sh
+}
+
+if [ -z "$dir" ]; then
+  main
+else
+  if [ ! -d "$dir" ]; then
+    echo "$dir does not exist!"
+  else
+    if [ "$(ls -A $dir)" ]; then
+      echo "$dir is not empty!"
+    else
+      main
+      mv ./flasher/* "$dir/"
+      rm -rf ./flasher
+    fi
+  fi
+fi
