@@ -26,6 +26,8 @@ Available options:
 }
 
 main() {
+  rm ./AllAppUpdate_vital-app/.gitkeep
+  rm ./oem_vital-app/.gitkeep
   rm -rf ./flasher && mkdir ./flasher
 
   cp ./factory/AllAppUpdate.bin ./flasher/AllAppUpdate.bin
@@ -52,6 +54,9 @@ main() {
 
   cmd='chmod 644 /oem/vital-app/*'
   sed -i "s|###REPLACE_TOKEN###|$cmd|" ./flasher/lsec_updatesh/7862lsec.sh
+
+  touch ./AllAppUpdate_vital-app/.gitkeep
+  touch ./oem_vital-app/.gitkeep
 }
 
 if [ -z "$dir" ]; then
