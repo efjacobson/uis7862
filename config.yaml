@@ -1,0 +1,21 @@
+---
+remove:
+  - 190000004_com.syu.gallery
+  - 190000000_com.android.calculator2
+add:
+  all_app_update:
+    apkmirror:
+      - com.lonelycatgames.Xplore
+      - org.fdroid.fdroid
+    fdroid:
+      - com.android.gpstest.osmdroid
+      - invalid
+    local:
+      - org.videolan.vlc/13040305.apk
+    # local: all
+  oem:
+    apkmirror:
+      - com.inkwired.droidinfo
+    fdroid:
+      - com.termux
+    local:
