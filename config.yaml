@@ -8,6 +8,7 @@ add:
       - com.lonelycatgames.Xplore
       - org.fdroid.fdroid
     fdroid:
+      - invalid
       - com.android.gpstest.osmdroid
       - invalid
     local:
